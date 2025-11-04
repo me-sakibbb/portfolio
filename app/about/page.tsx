@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { Suspense, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { EducationSection } from "@/components/sections/education-section"
 import { SkillsSection } from "@/components/sections/skills-section"
@@ -16,7 +16,8 @@ const tabs = [
   { key: "achievements", label: "Achievements" },
 ]
 
-export default function AboutPage() {
+// Separate inner component that uses useSearchParams
+function AboutContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -56,7 +57,7 @@ export default function AboutPage() {
     return () => clearTimeout(t)
   }, [])
 
-  // Keep active tab in sync if the URL query changes (back/forward nav)
+  // Keep active tab in sync with URL
   useEffect(() => {
     const tabFromUrl = (searchParams?.get("tab") || "education") as string
     if (tabFromUrl && tabFromUrl !== active) {
@@ -116,5 +117,13 @@ export default function AboutPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function AboutPage() {
+  return (
+    <Suspense fallback={<div className="p-12 text-center">Loading...</div>}>
+      <AboutContent />
+    </Suspense>
   )
 }
