@@ -32,6 +32,9 @@ export function Navigation() {
     for (const item of navItems) {
       if (item.href === "/") {
         if (pathname === "/") matchedKey = item.label
+      } else if (item.href === "/about") {
+        // match /about and /about?tab=...
+        if (pathname === "/about") matchedKey = item.label
       } else if (pathname.startsWith(item.href)) {
         matchedKey = item.label
       }

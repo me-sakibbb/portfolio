@@ -1,16 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
-import { Trash2, Plus } from "lucide-react"
+import { Trash2, Plus, ArrowUp, ArrowDown } from "lucide-react"
 
 export function EducationManager({ initialData, userId }: any) {
   const [education, setEducation] = useState(initialData)
+  const itemRefs = useRef<Record<number, HTMLDivElement | null>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
   const router = useRouter()
@@ -29,6 +30,21 @@ export function EducationManager({ initialData, userId }: any) {
       isNew: true,
     }
     setEducation([...education, newEducation])
+  }
+
+  const moveEducation = (index: number, direction: "up" | "down") => {
+    const updated = [...education]
+    const target = direction === "up" ? index - 1 : index + 1
+    if (target < 0 || target >= updated.length) return
+    const tmp = updated[target]
+    updated[target] = { ...updated[index], order_index: target }
+    updated[index] = { ...tmp, order_index: index }
+    const normalized = updated.map((s, i) => ({ ...s, order_index: i }))
+    setEducation(normalized)
+    setTimeout(() => {
+      const el = itemRefs.current[target]
+      if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 220)
   }
 
   const handleChange = (index: number, field: string, value: any) => {
@@ -88,9 +104,20 @@ export function EducationManager({ initialData, userId }: any) {
   return (
     <div className="space-y-6">
       {education.map((edu: any, index: number) => (
-        <Card key={edu.id || index}>
+        <div key={edu.id || index} ref={(el) => { itemRefs.current[index] = el }}>
+          <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle>Education {index + 1}</CardTitle>
+            <div className="flex items-center gap-4">
+              <CardTitle>Education {index + 1}</CardTitle>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="sm" onClick={() => moveEducation(index, 'up')} title="Move up">
+                  <ArrowUp className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => moveEducation(index, 'down')} title="Move down">
+                  <ArrowDown className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
             <Button variant="ghost" size="sm" onClick={() => handleDelete(index)}>
               <Trash2 className="w-4 h-4 text-destructive" />
             </Button>
@@ -158,7 +185,8 @@ export function EducationManager({ initialData, userId }: any) {
               </label>
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       ))}
 
       {message && (

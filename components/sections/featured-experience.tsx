@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/server"
+import { formatDate } from "@/lib/utils"
 
 export async function FeaturedExperience() {
   const supabase = await createClient()
@@ -19,9 +20,7 @@ export async function FeaturedExperience() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-12">
           <h2 className="text-3xl font-bold text-foreground">Featured Experience</h2>
-          <Link href="/experience">
-            <Button variant="outline">View All Experience</Button>
-          </Link>
+
         </div>
 
         <div className="space-y-6">
@@ -32,16 +31,31 @@ export async function FeaturedExperience() {
                   <h3 className="font-bold text-lg text-foreground">{exp.title}</h3>
                   <p className="text-sm text-primary">{exp.company}</p>
                 </div>
-                {exp.is_current && (
+                {exp.is_current ? (
                   <span className="bg-green-500/20 text-green-700 dark:text-green-400 text-xs px-2 py-1 rounded-full">
                     Current
                   </span>
+                ) : (
+                  <span className="bg-gray-500/20 text-gray-700 dark:text-gray-400 text-xs px-2 py-1 rounded-full">
+                    {formatDate(exp.start_date)} -{" "}
+                    {exp.end_date ? formatDate(exp.end_date) : "Present"}
+                  </span>
                 )}
+
+
               </div>
               <p className="text-muted-foreground text-sm">{exp.description}</p>
             </div>
           ))}
         </div>
+
+        <div className="pt-8 flex items-center justify-center">
+          <Link href="/about?tab=experience">
+            <Button variant="outline">Learn More</Button>
+          </Link>
+        </div>
+
+
       </div>
     </section>
   )

@@ -9,8 +9,8 @@ import { ProjectsSection } from "@/components/sections/projects-section"
 import { AchievementsSection } from "@/components/sections/achievements-section"
 
 const tabs = [
+    { key: "skills", label: "Skills" },
   { key: "education", label: "Education" },
-  { key: "skills", label: "Skills" },
   { key: "experiences", label: "Experiences" },
   { key: "projects", label: "Projects" },
   { key: "achievements", label: "Achievements" },

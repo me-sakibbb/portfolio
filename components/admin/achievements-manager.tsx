@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
-import { Trash2, Plus } from "lucide-react"
+import { Trash2, Plus, ArrowUp, ArrowDown } from "lucide-react"
 
 export function AchievementsManager({ initialData, userId }: any) {
   const [achievements, setAchievements] = useState(initialData)
@@ -28,6 +28,17 @@ export function AchievementsManager({ initialData, userId }: any) {
       isNew: true,
     }
     setAchievements([...achievements, newAchievement])
+  }
+
+  const moveAchievement = (index: number, direction: "up" | "down") => {
+    const updated = [...achievements]
+    const target = direction === "up" ? index - 1 : index + 1
+    if (target < 0 || target >= updated.length) return
+    const tmp = updated[target]
+    updated[target] = { ...updated[index], order_index: target }
+    updated[index] = { ...tmp, order_index: index }
+    const normalized = updated.map((s, i) => ({ ...s, order_index: i }))
+    setAchievements(normalized)
   }
 
   const handleChange = (index: number, field: string, value: any) => {
@@ -93,7 +104,17 @@ export function AchievementsManager({ initialData, userId }: any) {
       {achievements.map((achievement: any, index: number) => (
         <Card key={achievement.id || index}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle>Achievement {index + 1}</CardTitle>
+            <div className="flex items-center gap-4">
+              <CardTitle>Achievement {index + 1}</CardTitle>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="sm" onClick={() => moveAchievement(index, 'up')} title="Move up">
+                  <ArrowUp className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => moveAchievement(index, 'down')} title="Move down">
+                  <ArrowDown className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
             <Button variant="ghost" size="sm" onClick={() => handleDelete(index)}>
               <Trash2 className="w-4 h-4 text-destructive" />
             </Button>

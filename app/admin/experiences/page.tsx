@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { ExperiencesManager } from "@/components/admin/experiences-manager"
+import { AdminBreadcrumbs } from "@/components/admin/admin-breadcrumbs"
+import { AdminNavbar } from "@/components/admin/admin-navbar"
 
 export default async function ExperiencesPage() {
   const supabase = await createClient()
@@ -20,9 +22,11 @@ export default async function ExperiencesPage() {
     .order("order_index", { ascending: true })
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-10">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Manage Experiences</h1>
+    <div className="min-h-screen bg-background p-0 md:p-0">
+      <div className="max-w-4xl mx-auto p-6 md:p-10">
+        <AdminNavbar />
+        <AdminBreadcrumbs />
+        <h1 className="text-xl font-bold mb-8 mt-2">Manage Experiences</h1>
         <ExperiencesManager initialData={experiences || []} userId={user.id} />
       </div>
     </div>

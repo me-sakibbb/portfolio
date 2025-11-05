@@ -1,18 +1,30 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/server"
+import SkillsCategoryCard from "@/components/SkillsCategoryCard"
 
 export async function FeaturedSkills() {
   const supabase = await createClient()
 
-  const { data: skills } = await supabase
+  const { data: skills, error } = await supabase
     .from("skills")
     .select("*")
     .eq("is_featured", true)
     .order("order_index", { ascending: true })
-    .limit(3)
+
+  if (error) {
+    console.error("Error fetching featured skills:", error)
+    return null
+  }
 
   if (!skills || skills.length === 0) return null
+
+  // 🧩 Group skills by category
+  const skillsByCategory = skills.reduce((acc: Record<string, any[]>, skill) => {
+    if (!acc[skill.category]) acc[skill.category] = []
+    acc[skill.category].push(skill)
+    return acc
+  }, {})
 
   return (
     <section className="py-16 bg-muted/50">
@@ -25,14 +37,12 @@ export async function FeaturedSkills() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {skills.map((skill) => (
-            <div key={skill.id} className="bg-background border border-border rounded-lg p-6">
-              <h3 className="font-semibold text-foreground mb-2">{skill.skill_name}</h3>
-              <p className="text-sm text-muted-foreground mb-3">{skill.category}</p>
-              <span className="inline-block bg-primary text-primary-foreground text-xs px-3 py-1 rounded-full">
-                {skill.proficiency_level}
-              </span>
-            </div>
+          {Object.entries(skillsByCategory).map(([category, categorySkills]) => (
+            <SkillsCategoryCard
+              key={category}
+              category={category}
+              categorySkills={categorySkills}
+            />
           ))}
         </div>
       </div>
