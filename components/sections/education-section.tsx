@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { EducationCard } from "../EducationCard"
 
 export function EducationSection() {
   const [education, setEducation] = useState<any[]>([])
@@ -25,17 +26,7 @@ export function EducationSection() {
 
         <div className="space-y-6">
           {education.map((edu) => (
-            <div key={edu.id} className="p-6 rounded-lg border border-border bg-card/50">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-semibold">{edu.degree}</h3>
-                  <p className="text-muted-foreground">{edu.institution}</p>
-                </div>
-                {edu.year && <span className="text-sm font-semibold text-primary">{edu.year}</span>}
-              </div>
-              {edu.gpa && <p className="text-sm text-muted-foreground mt-2">GPA: {edu.gpa}</p>}
-              {edu.description && <p className="text-muted-foreground mt-2">{edu.description}</p>}
-            </div>
+            <EducationCard key={edu.id} edu={edu} />
           ))}
         </div>
       </div>

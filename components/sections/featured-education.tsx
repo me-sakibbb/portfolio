@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/server"
+import { EducationCard } from "../EducationCard"
 
 export async function FeaturedEducation() {
   const supabase = await createClient()
@@ -19,22 +20,14 @@ export async function FeaturedEducation() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-12">
           <h2 className="text-3xl font-bold text-foreground">Featured Education</h2>
-          <Link href="/education">
-            <Button variant="outline">View All Education</Button>
+          <Link href="/about?tab=education">
+            <Button variant="outline" className="cursor-pointer">View All Education</Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
           {education.map((edu) => (
-            <div key={edu.id} className="bg-background border border-border rounded-lg p-6">
-              <h3 className="font-bold text-foreground mb-2">{edu.degree}</h3>
-              <p className="text-sm text-primary mb-2">{edu.institution}</p>
-              {edu.field && <p className="text-xs text-muted-foreground mb-3">{edu.field}</p>}
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-semibold text-foreground">{edu.year}</span>
-                <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">GPA: {edu.gpa}</span>
-              </div>
-            </div>
+            <EducationCard key={edu.id} edu={edu} />
           ))}
         </div>
       </div>

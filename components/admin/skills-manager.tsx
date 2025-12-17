@@ -19,8 +19,11 @@ export function SkillsManager({ initialData, userId }: any) {
   const supabase = createClient()
 
   // Get unique categories from skills
-  const categories = Array.from(new Set(skills.map((s: any) => s.category || ""))).filter(Boolean) as string[]
-  if (categories.length === 0) categories.push("")
+// Get unique categories (including empty one if new)
+let categories = Array.from(new Set(skills.map((s: any) => s.category))) as string[]
+if (!categories.includes("")) {
+  categories.push("") // ensure blank category appears for new additions
+}
 
   const handleAddCategory = () => {
     const newSkill = {
@@ -40,7 +43,7 @@ export function SkillsManager({ initialData, userId }: any) {
   const handleCategoryBlur = (oldCategory: string) => {
     const newCategory = editingCategory[oldCategory] || oldCategory
     if (newCategory !== oldCategory) {
-      setSkills(skills.map(skill => 
+      setSkills(skills.map((skill: { category: string }) => 
         skill.category === oldCategory 
           ? { ...skill, category: newCategory }
           : skill

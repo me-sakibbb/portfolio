@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import { EducationCard } from "@/components/EducationCard"
 
 export default async function EducationPage() {
   const supabase = await createClient()
@@ -16,15 +17,7 @@ export default async function EducationPage() {
 
           <div className="space-y-6">
             {education?.map((edu) => (
-              <div key={edu.id} className="bg-card border border-border rounded-lg p-8">
-                <h2 className="text-2xl font-bold text-foreground">{edu.degree}</h2>
-                <p className="text-lg text-primary mb-4">{edu.institution}</p>
-                {edu.description && <p className="text-muted-foreground mb-4">{edu.description}</p>}
-                <div className="flex justify-between items-center text-sm text-muted-foreground">
-                  <span>{edu.year}</span>
-                  <span>GPA: {edu.gpa}</span>
-                </div>
-              </div>
+              <EducationCard key={edu.id} {...edu} />
             ))}
           </div>
         </div>
